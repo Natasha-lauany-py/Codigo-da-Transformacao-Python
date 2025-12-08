@@ -1,0 +1,101 @@
+class Livro:
+    """Representa um único livro na biblioteca."""
+    def __init__(self, titulo, autor, isbn):
+        self.titulo = titulo
+        self.autor = autor
+        self.isbn = isbn
+        self.disponivel = True
+
+    def __str__(self):
+        return f"'{self.titulo}' por {self.autor} (ISBN: {self.isbn})"
+
+class Biblioteca:
+    """Gerencia a coleção de livros e os empréstimos."""
+    def __init__(self, nome):
+        self.nome = nome
+        # O dicionário armazena livros por ISBN para acesso rápido
+        self.catalogo = {} 
+        self.emprestimos = {} # Rastreia {isbn: 'nome_do_cliente'}
+
+    def adicionar_livro(self, livro):
+        """Adiciona um objeto Livro ao catálogo."""
+        if livro.isbn in self.catalogo:
+            print(f"⚠️ Livro com ISBN {livro.isbn} já está no catálogo.")
+            return
+        self.catalogo[livro.isbn] = livro
+        print(f"✅ Livro adicionado: {livro.titulo}")
+
+    def emprestar_livro(self, isbn, nome_cliente):
+        """Marca um livro como emprestado."""
+        if isbn not in self.catalogo:
+            print(f"❌ Erro: Livro com ISBN {isbn} não encontrado no catálogo.")
+            return
+
+        livro = self.catalogo[isbn]
+
+        if not livro.disponivel:
+            print(f"❌ Erro: '{livro.titulo}' não está disponível para empréstimo.")
+            return
+
+        livro.disponivel = False
+        self.emprestimos[isbn] = nome_cliente
+        print(f"✅ Livro '{livro.titulo}' emprestado para {nome_cliente}.")
+
+    def devolver_livro(self, isbn):
+        """Marca um livro como disponível novamente."""
+        if isbn in self.emprestimos:
+            livro = self.catalogo[isbn]
+            livro.disponivel = True
+            cliente = self.emprestimos.pop(isbn) # Remove do rastreamento de empréstimos
+            print(f"✅ Livro '{livro.titulo}' devolvido por {cliente}.")
+        else:
+            print(f"⚠️ Livro com ISBN {isbn} não estava registrado como emprestado.")
+            
+    def relatorio(self):
+        """Exibe o status atual da biblioteca."""
+        print(f"\n--- Relatório da Biblioteca '{self.nome}' ---")
+        
+        disponiveis = [l for l in self.catalogo.values() if l.disponivel]
+        emprestados = [l for l in self.catalogo.values() if not l.disponivel]
+
+        print(f"Total de livros no catálogo: {len(self.catalogo)}")
+        print(f"Livros Disponíveis ({len(disponiveis)}):")
+        for livro in disponiveis:
+            print(f"  - {livro}")
+            
+        print(f"\nLivros Emprestados ({len(emprestados)}):")
+        for livro in emprestados:
+            cliente = self.emprestimos.get(livro.isbn, "Cliente Desconhecido")
+            print(f"  - {livro} (Emprestado para: {cliente})")
+
+
+# --- Execução do Desafio Extra ---
+print("\n--- Desafio Extra: Sistema de Biblioteca ---")
+
+minha_biblioteca = Biblioteca("Aprender POO")
+
+# Criando objetos Livro
+livro1 = Livro("Python para Iniciantes", "Guido van Rossum", "978-1234")
+livro2 = Livro("POO Avançado", "Ada Lovelace", "978-5678")
+livro3 = Livro("Estrutura de Dados", "Donald Knuth", "978-9012")
+
+# Adicionando livros
+minha_biblioteca.adicionar_livro(livro1)
+minha_biblioteca.adicionar_livro(livro2)
+minha_biblioteca.adicionar_livro(livro3)
+
+# Realizando empréstimos
+minha_biblioteca.emprestar_livro("978-1234", "Carlos")
+minha_biblioteca.emprestar_livro("978-5678", "Sofia")
+
+# Tentando emprestar um livro indisponível
+minha_biblioteca.emprestar_livro("978-1234", "Pedro")
+
+# Relatório
+minha_biblioteca.relatorio()
+
+# Devolvendo um livro
+minha_biblioteca.devolver_livro("978-1234")
+
+# Relatório Final
+minha_biblioteca.relatorio()

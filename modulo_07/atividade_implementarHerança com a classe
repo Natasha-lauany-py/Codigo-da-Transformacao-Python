@@ -1,0 +1,25 @@
+class CarroEletrico(Carro):
+    """
+    Representa um carro elétrico, herdando de Carro e adicionando
+    o atributo exclusivo 'autonomia_bateria'.
+    """
+
+    def __init__(self, marca, modelo, autonomia_bateria):
+        # 1. Chama o construtor da classe pai (Carro)
+        super().__init__(marca, modelo)
+        
+        # 2. Adiciona o atributo exclusivo
+        self.autonomia_bateria = autonomia_bateria
+        print(f"Objeto CarroEletrico '{modelo}' criado.")
+        
+    # Opcional: Sobrescrever o método da classe pai para incluir a autonomia
+    def exibir_info(self):
+        """Sobrescreve o método para exibir informações mais completas."""
+        # Chama a exibição da classe pai para evitar repetição de código
+        super().exibir_info() 
+        print(f"  Autonomia da Bateria: {self.autonomia_bateria} km")
+
+# --- Testando a Classe Derivada ---
+print("\n--- Teste 2: Classe CarroEletrico (Herança) ---")
+carro_eletrico = CarroEletrico("Tesla", "Model S", 650)
+carro_eletrico.exibir_info()
